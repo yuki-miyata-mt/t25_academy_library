@@ -5,12 +5,17 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import io.micrometer.common.util.StringUtils;
+import jp.co.metateam.library.model.Account;
+import jp.co.metateam.library.model.AccountDto;
 import jp.co.metateam.library.model.BookMst;
 import jp.co.metateam.library.model.BookMstDto;
 import jp.co.metateam.library.repository.BookMstRepository;
@@ -42,8 +47,72 @@ public class BookMstService {
 
         return bookMstDtoList;
     }
+
+
+    @Transactional
+    public void save(BookMstDto BookMstDto) {
+        try {
+            // BookMstDtoからBookMstへの変換
+            BookMst BookMst = new BookMst();
+
+            BookMst.setTitle(BookMstDto.getTitle());
+            BookMst.setIsbn(BookMstDto.getIsbn());
+            
+            
+
+            // データベースへの保存
+            this.bookMstRepository.save(BookMst);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+@PostMapping
+public Boolean checkEntry (BookMstDto bookMstDto,Model model){
+    String booktitle =bookMstDto .getTitle();
+    String bookisbn =bookMstDto.getIsbn();
+    List<String> errTitleList =new ArrayList<>();
+    List<String>errIsbnList =new ArrayList <>();
+
+        if(StringUtils.isEmpty(booktitle)){
+            errTitleList.add("書籍名は必須です");
+            model.addAttribute("errTitle",errTitleList);
+        }
+        if(booktitle.length()>255){
+            errTitleList.add("書籍名は255文字以内で入力してください");
+            model.addAttribute("errTitle",errTitleList);
+        }
+        if(StringUtils.isEmpty(bookisbn)){
+            errIsbnList.add("ISBNは必須です");
+            model.addAttribute("errIsbn",errIsbnList);
+        }
+        if(bookisbn.length()!=13){
+            errIsbnList.add("ISBNは13桁以内で入力してください");
+            model.addAttribute("errIsbn", errIsbnList);
+        }
+        if(!bookisbn.matches("^[0-9]+$")){
+            errIsbnList.add("ISBNは半角数字で入力してください");
+            model.addAttribute("errIsbn",errIsbnList);
+        }
+        
+        if (!errTitleList.isEmpty() || !errIsbnList.isEmpty()){
+            return true;
+        }
+        return false;
+    }
     
-}
+ public Boolean checkIsbnEntry (BookMstDto bookMstDto,Model model){
+    String getIsbn=bookMstDto.getIsbn();
+    List<String>errTitleList=new ArrayList<>();
+    List<String>errIsbnList=new ArrayList<>();
+    List<BookMst>bookMst =this.bookMstRepository.selectByIsbn(getIsbn);
+    if (!bookMst.isEmpty()){
+        errIsbnList.add("登録されてるISBNです");
+        model.addAttribute("errIsbn",errIsbnList);
+        return true ;}
+        return false;
+ }
+ }
+
 
 
 

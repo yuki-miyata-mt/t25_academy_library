@@ -66,14 +66,14 @@ public class RegisterController {
 
             accountService.save(accountDto);
 
-            return "redirect:login";
+         return"redirect:/book/index";
         } catch (Exception e) {
             log.error(e.getMessage());
 
             ra.addFlashAttribute("accountDto", accountDto);
             ra.addFlashAttribute("org.springframework.validation.BindingResult.accountDto", result);
 
-            return "redirect:register";
+            return "redirect:login";
         }
     }
 }
