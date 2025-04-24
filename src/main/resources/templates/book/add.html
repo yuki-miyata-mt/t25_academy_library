@@ -2,7 +2,7 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{common :: meta_header('書籍登録',~{::link},~{::script})}">
-    <title th:text="${title}+' | MTLibrary'"></title>
+    <title th:text="${title} + ' | MTLibrary'">書籍登録 | MTLibrary</title>
     <link rel="stylesheet" th:href="@{/css/book/add.css}" />
     <script type="text/javascript" th:src="@{/js/book/add.js}"></script>
 </head>
@@ -10,21 +10,70 @@
 <body>
     <div class="contents">
         <div th:replace="~{common :: main_sidebar}"></div>
+
         <div class="main_contents">
             <div th:replace="~{common :: header}"></div>
-            <div class="inner_contens">
+
+            <div class="inner_contents">
                 <div class="page_title">書籍登録</div>
+
                 <div class="page_contents">
                     <form id="book_register_form" th:object="${bookMstDto}" th:action="@{/book/add}" method="post">
-                        <div class="mb30 flexarea">
-                            <span>
-                                <a th:href="@{/book/index}" class="link">← 一覧へ戻る</a>
-                            </span>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td colspan="2">
+                                        <p style="font-size: 12px; color: red;">*これは必須項目です</p>
+                                    </td>
+                                </tr>
+                                <span style="margin-left: 20px;">
+                                    <a th:href="@{/book/index}" class="link">← 一覧へ戻る</a>
+                                </span>
+
+                                <!-- 書籍名 -->
+                                <tr>
+                                    <th scope="row">書籍名&nbsp;<span style="color: red;">*</span></th>
+                                    <td>
+                                        <input type="text" th:field="*{title}" placeholder="書籍名を入力してください"
+                                            style="width: 600px;" maxlength="255">
+
+                                        <div class="errTitle" th:if="${errTitle}">
+                                            <div th:each="msg : ${errTitle}">
+                                                <p th:text="${msg}" style="color:red;"></p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- ISBN -->
+                                <tr>
+                                    <th scope="row">ISBN&nbsp;<span style="color: red;">*</span></th>
+                                    <td>
+                                        <input type="text" th:field="*{isbn}" placeholder="ISBNを入力してください"
+                                            style="width: 600px;">
+
+                                        <div class="errIsbn" th:if="${errIsbn}">
+                                            <div th:each="msg : ${errIsbn}">
+                                                <p th:text="${msg}" style="color:red;"></p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div style="margin-top: 20px;">
+                            <button class="btn_block" type="submit">保存</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
     <div th:replace="~{common :: footer}"></div>
 </body>
+
+</html>
