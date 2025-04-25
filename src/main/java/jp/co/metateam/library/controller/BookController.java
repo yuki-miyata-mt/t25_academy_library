@@ -40,6 +40,8 @@ public class BookController {
         List<BookMstDto> bookMstList = this.bookMstService.findAvailableWithStockCount();
         
         model.addAttribute("bookMstList", bookMstList);
+//ここだけ追加した
+        model.addAttribute("bookMstDto", new BookMstDto());
 
         return "book/index";
     }
