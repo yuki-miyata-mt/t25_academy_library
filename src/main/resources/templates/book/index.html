@@ -12,6 +12,12 @@
             <div th:replace="~{common :: header}"></div>
             <div class="inner_contens">
                 <div class="page_title">書籍一覧</div>
+                <!--書籍登録画面遷移-->
+
+                <div class="top-bar">
+                    <a th:href="@{/book/add}" class="register-button">書籍登録</a>
+                </div>
+            
                 <!--ここに書籍情報表示の構文を入れる-->
                 <div class="book-list-section">
                 <table class="book-table">
